@@ -3,6 +3,10 @@
  *
  * Author: Petro <petro@petro.ws>
  *
+ * Project homepage: https://github.com/petrows/esp-32-tm1637
+ * Example: https://github.com/petrows/esp-32-tm1637-example
+ *
+ * License: MIT (see LICENSE file included)
  *
  */
 

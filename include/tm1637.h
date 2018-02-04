@@ -1,3 +1,11 @@
+/**
+ * ESP-32 IDF library for control TM1637 LCD 7-Segment display
+ *
+ * Author: Petro <petro@petro.ws>
+ *
+ *
+ */
+
 #ifndef TM1637_H
 #define TM1637_H
 

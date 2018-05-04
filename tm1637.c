@@ -12,10 +12,13 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <rom/ets_sys.h>
 
 #define TM1637_ADDR_AUTO  0x40
 #define TM1637_ADDR_FIXED 0x44
+
+#define MINUS_SIGN_IDX	16
 
 static const int8_t tm1637_symbols[] = {
 			    // XGFEDCBA
@@ -35,6 +38,7 @@ static const int8_t tm1637_symbols[] = {
 		0x5e, // 0b01011110,    // d
 		0x79, // 0b01111001,    // E
 		0x71, // 0b01110001     // F
+		0x40, // 0b01000000		// minus sign
 };
 
 static void tm1637_start(tm1637_lcd_t * lcd);
@@ -180,5 +184,69 @@ void tm1637_set_number_lead_dot(tm1637_lcd_t * lcd, uint16_t number, bool lead_z
 		tm1637_set_segment_number(lcd, 2, (number / 10) % 10, dot_mask & 0x02);
 		tm1637_set_segment_number(lcd, 1, (number / 100) % 10, dot_mask & 0x04);
 		tm1637_set_segment_number(lcd, 0, (number / 1000) % 10, dot_mask & 0x08);
+	}
+}
+
+void tm1637_set_float(tm1637_lcd_t * lcd, float n) {
+	if( n < 0 ) {
+		tm1637_set_segment_number(lcd, 0, MINUS_SIGN_IDX, 0);
+		float absn = fabs(n);
+		int int_part = (int)absn;
+		float fx_part = absn - int_part;
+		if( absn < 10 ) {
+			fx_part *= 100;
+			tm1637_set_segment_number(lcd, 1, (int)(absn + 0.5), 1 );
+			tm1637_set_segment_number(lcd, 2, ((int)fx_part/10) % 10, 0 );
+			tm1637_set_segment_number(lcd, 3, ((int)fx_part) % 10, 0 );
+		}
+		else if( n < 100 ) {
+			fx_part *= 100;
+			uint8_t f = ((int)fx_part % 10);
+			
+			tm1637_set_segment_number(lcd, 1, (int_part/10) % 10, 0 );
+			tm1637_set_segment_number(lcd, 2, int_part % 10, 1 );
+			tm1637_set_segment_number(lcd, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+		}
+		else if( n < 1000 ) {
+			tm1637_set_segment_number(lcd, 1, (int_part/100) % 10, 0 );
+			tm1637_set_segment_number(lcd, 2, (int_part/10) % 10, 0 );
+			tm1637_set_segment_number(lcd, 3, (int_part % 10) + ((fx_part >= 0.5 )?1:0), 0 );
+		}
+	}
+	else {
+		//	positive number
+		int int_part = (int)n;
+		float fx_part = n - int_part;
+		if( n < 10 ) {
+			fx_part *= 10000;
+			
+			tm1637_set_segment_number(lcd, 0, int_part, 1);
+			tm1637_set_segment_number(lcd, 1, ((int)fx_part/1000) % 10, 0 );
+			tm1637_set_segment_number(lcd, 2, ((int)fx_part/100) % 10, 0 );
+			
+			//	deal with rounding of digits our display cannot handle
+			uint8_t f = ((int)fx_part % 10);
+			tm1637_set_segment_number(lcd, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+		}
+		else if( n < 100 ) {
+			fx_part *= 1000;
+			
+			tm1637_set_segment_number(lcd, 0, (int_part/10) % 10, 0);
+			tm1637_set_segment_number(lcd, 1, int_part % 10, 1 );
+			tm1637_set_segment_number(lcd, 2, ((int)fx_part/100) % 10, 0 );
+			
+			uint8_t f = ((int)fx_part % 10);
+			tm1637_set_segment_number(lcd, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+		}
+		else if( n < 1000 ) {
+			fx_part *= 100;
+			
+			tm1637_set_segment_number(lcd, 0, (int_part/100) % 10, 0);
+			tm1637_set_segment_number(lcd, 1, (int_part/10) % 10, 0 );
+			tm1637_set_segment_number(lcd, 2, int_part % 10, 2 );
+			
+			uint8_t f = ((int)fx_part % 10);
+			tm1637_set_segment_number(lcd, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+		}
 	}
 }

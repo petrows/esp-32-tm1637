@@ -46,6 +46,11 @@ static void tm1637_stop(tm1637_led_t * led);
 static void tm1637_send_byte(tm1637_led_t * led, uint8_t byte);
 static void tm1637_delay();
 
+static inline float nearestf(float val,int precision) {
+    int scale = pow(10,precision);
+    return roundf(val * scale) / scale;
+}
+
 void tm1637_start(tm1637_led_t * led)
 {
     // Send start bit to TM1637
@@ -190,7 +195,7 @@ void tm1637_set_number_lead_dot(tm1637_led_t * led, uint16_t number, bool lead_z
 void tm1637_set_float(tm1637_led_t * led, float n) {
     if( n < 0 ) {
         tm1637_set_segment_number(led, 0, MINUS_SIGN_IDX, 0);
-        float absn = fabs(n);
+        float absn = nearestf(fabs(n),1);
         int int_part = (int)absn;
         float fx_part = absn - int_part;
         if( absn < 10 ) {
@@ -218,35 +223,34 @@ void tm1637_set_float(tm1637_led_t * led, float n) {
         int int_part = (int)n;
         float fx_part = n - int_part;
         if( n < 10 ) {
-            fx_part *= 10000;
+            n = nearestf(n,1);
+            int_part = (int)n;
+            fx_part = 10000 * (n - int_part);
             
             tm1637_set_segment_number(led, 0, int_part, 1);
             tm1637_set_segment_number(led, 1, ((int)fx_part/1000) % 10, 0 );
             tm1637_set_segment_number(led, 2, ((int)fx_part/100) % 10, 0 );
-            
-            //  deal with rounding of digits our display cannot handle
-            uint8_t f = ((int)fx_part % 10);
-            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10, 0 );
         }
         else if( n < 100 ) {
-            fx_part *= 1000;
+            n = nearestf(n,2);
+            int_part = (int)n;
+            fx_part = 1000 * (n - int_part);
             
             tm1637_set_segment_number(led, 0, (int_part/10) % 10, 0);
             tm1637_set_segment_number(led, 1, int_part % 10, 1 );
             tm1637_set_segment_number(led, 2, ((int)fx_part/100) % 10, 0 );
-            
-            uint8_t f = ((int)fx_part % 10);
-            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10,0);
         }
         else if( n < 1000 ) {
-            fx_part *= 100;
+            n = nearestf(n,2);
+            int_part = (int)n;
+            fx_part = 100 * (n - int_part);
             
             tm1637_set_segment_number(led, 0, (int_part/100) % 10, 0);
             tm1637_set_segment_number(led, 1, (int_part/10) % 10, 0 );
-            tm1637_set_segment_number(led, 2, int_part % 10, 2 );
-            
-            uint8_t f = ((int)fx_part % 10);
-            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10 + ((f > 4)?1:0), 0 );
+            tm1637_set_segment_number(led, 2, int_part % 10, 1 );
+            tm1637_set_segment_number(led, 3, ((int)fx_part/10) % 10, 0 );
         }
     }
 }

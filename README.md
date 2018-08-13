@@ -14,6 +14,10 @@ This is an library of control TM1637 LCD 7-segment display using ESP-32 IDF tool
 
 This library uses `ets_delay_us()` function to generate i2c-like control sequences. Please note - while using within FreeRTOS task will be blocked while data is transmitted. 
 
+## Example
+
+The example is available here: [GitHub petrows/esp-32-tm1637-example](https://github.com/petrows/esp-32-tm1637-example)
+
 ## Source Code
 
 The source is available from [GitHub petrows/esp-32-tm1637](https://github.com/petrows/esp-32-tm1637).

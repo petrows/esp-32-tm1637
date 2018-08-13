@@ -8,6 +8,7 @@ This is an library of control TM1637 LCD 7-segment display using ESP-32 IDF tool
 
  * Display numbers
  * Display raw segment data
+ * Display floating point numbers
  
 ## Important notes
 

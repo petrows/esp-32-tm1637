@@ -14,6 +14,7 @@
 #define TM1637_H
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include <driver/gpio.h>
 
 #ifdef __cplusplus

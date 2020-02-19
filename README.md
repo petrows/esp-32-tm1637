@@ -16,7 +16,7 @@ This library uses `ets_delay_us()` function to generate i2c-like control sequenc
 
 ## Example
 
-The example is available here: [GitHub petrows/esp-32-tm1637-example](https://github.com/petrows/esp-32-tm1637-example)
+The example is available at: [examples/default_example](examples/default_example)
 
 ## Source Code
 

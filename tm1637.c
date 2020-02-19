@@ -11,6 +11,7 @@
 #include "tm1637.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <math.h>
 #include <rom/ets_sys.h>

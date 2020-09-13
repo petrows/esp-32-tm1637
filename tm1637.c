@@ -54,22 +54,20 @@ static inline float nearestf(float val,int precision) {
 
 void tm1637_start(tm1637_led_t * led)
 {
-    // Send start bit to TM1637
-    gpio_set_level(led->m_pin_clk, 1);
-    gpio_set_level(led->m_pin_dta, 1);
-    tm1637_delay();
+    // Send start signal
+    // Both outputs are expected to be HIGH beforehand
     gpio_set_level(led->m_pin_dta, 0);
-    tm1637_delay();
-    gpio_set_level(led->m_pin_clk, 0);
     tm1637_delay();
 }
 
 void tm1637_stop(tm1637_led_t * led)
 {
-    gpio_set_level(led->m_pin_clk, 0);
+    // Send stop signal
+    // CLK is expected to be LOW beforehand
     gpio_set_level(led->m_pin_dta, 0);
     tm1637_delay();
     gpio_set_level(led->m_pin_clk, 1);
+    tm1637_delay();
     gpio_set_level(led->m_pin_dta, 1);
     tm1637_delay();
 }
@@ -81,43 +79,47 @@ void tm1637_send_byte(tm1637_led_t * led, uint8_t byte)
         gpio_set_level(led->m_pin_clk, 0);
         tm1637_delay();
         gpio_set_level(led->m_pin_dta, byte & 0x01); // Send current bit
-        gpio_set_level(led->m_pin_clk, 1);
         byte >>= 1;
+        tm1637_delay();
+        gpio_set_level(led->m_pin_clk, 1);
         tm1637_delay();
     }
 
-    gpio_set_level(led->m_pin_clk, 0); //wait for the ACK
-    gpio_set_level(led->m_pin_dta, 1);
+    // The TM1637 signals an ACK by pulling DIO low from the falling edge of
+    // CLK after sending the 8th bit, to the next falling edge of CLK.
+    // DIO needs to be set as input during this time to avoid having both
+    // chips trying to drive DIO at the same time.
+    gpio_set_direction(led->m_pin_dta, GPIO_MODE_INPUT);
+    gpio_set_level(led->m_pin_clk, 0); // TM1637 starts ACK (pulls DIO low)
     tm1637_delay();
     gpio_set_level(led->m_pin_clk, 1);
-    gpio_set_direction(led->m_pin_dta, GPIO_MODE_INPUT);
     tm1637_delay();
-    uint8_t ack = gpio_get_level(led->m_pin_dta);
-    if (ack == 0) {
-        gpio_set_direction(led->m_pin_dta, GPIO_MODE_OUTPUT);
-        gpio_set_level(led->m_pin_dta, 0);
-    }
+    gpio_set_level(led->m_pin_clk, 0); // TM1637 ends ACK (releasing DIO)
     tm1637_delay();
     gpio_set_direction(led->m_pin_dta, GPIO_MODE_OUTPUT);
-    tm1637_delay();
 }
 
 void tm1637_delay()
 {
-    ets_delay_us(50);
+    ets_delay_us(3);
 }
 
 // PUBLIC PART:
 
 tm1637_led_t * tm1637_init(gpio_num_t pin_clk, gpio_num_t pin_data) {
-    tm1637_led_t * led = malloc(sizeof(tm1637_led_t));
+    tm1637_led_t * led = (tm1637_led_t *) malloc(sizeof(tm1637_led_t));
     led->m_pin_clk = pin_clk;
     led->m_pin_dta = pin_data;
     led->m_brightness = 0x07;
+    // Set CLK to low during DIO initialization to avoid sending a start signal by mistake
     gpio_set_direction(pin_clk, GPIO_MODE_OUTPUT);
-    gpio_set_direction(pin_data, GPIO_MODE_OUTPUT);
     gpio_set_level(pin_clk, 0);
-    gpio_set_level(pin_data, 0);
+    tm1637_delay();
+    gpio_set_direction(pin_data, GPIO_MODE_OUTPUT);
+    gpio_set_level(pin_data, 1);
+    tm1637_delay();
+    gpio_set_level(pin_clk, 1);
+    tm1637_delay();
     return led;
 }
 

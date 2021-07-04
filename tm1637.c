@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-#include <rom/ets_sys.h>
+#include <esp32/rom/ets_sys.h>
 
 #define TM1637_ADDR_AUTO  0x40
 #define TM1637_ADDR_FIXED 0x44

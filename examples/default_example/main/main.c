@@ -46,7 +46,7 @@ void lcd_tm1637_task(void * arg)
 		for (int x=0; x<7; x++) {
 			tm1637_set_brightness(lcd, x);
 			tm1637_set_number(lcd, 8888);
-			vTaskDelay(300 / portTICK_RATE_MS);
+			vTaskDelay(300 / portTICK_PERIOD_MS);
 		}
 
 		for (uint8_t x=0; x<3; ++x)

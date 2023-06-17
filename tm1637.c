@@ -101,7 +101,7 @@ void tm1637_send_byte(tm1637_led_t * led, uint8_t byte)
 
 void tm1637_delay()
 {
-    ets_delay_us(3);
+    ets_delay_us(CONFIG_DELAY_BLOCKING_TIME);
 }
 
 // PUBLIC PART:

@@ -1,0 +1,18 @@
+menu "ESP TM1637"
+
+    config DELAY_BLOCKING_TIME
+        int "Blocking time between clock pin changes"
+        range 1 100
+        default 3
+        help
+            This option allows you to configure the blocking time between changes
+            of the clock pin in the ESP TM1637 module. The value represents the
+            delay in microseconds (us) to be inserted between clock pin changes.
+            Increasing the blocking time can help ensure reliable communication
+            with the TM1637 module, especially in scenarios where the module may
+            have difficulty keeping up with rapid clock changes. Adjust this value
+            based on your specific requirements and the characteristics of your
+            TM1637 module hardware. The range for this option is from 1 to 100 microseconds,
+            with a default value of 50 microseconds.
+
+endmenu

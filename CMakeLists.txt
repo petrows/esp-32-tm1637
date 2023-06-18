@@ -1,4 +1,8 @@
-if(IDF_VERSION_MAJOR AND IDF_VERSION_MAJOR GREATER 3)
+if(IDF_VERSION_MAJOR GREATER_EQUAL 5)
+    idf_component_register(SRCS "tm1637.c"
+    INCLUDE_DIRS "include"
+    REQUIRES driver)
+elseif(IDF_VERSION_MAJOR EQUAL 3 OR IDF_VERSION_MAJOR EQUAL 4)
     idf_component_register(SRCS "tm1637.c"
         INCLUDE_DIRS "include")
 else()

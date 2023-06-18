@@ -14,7 +14,19 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+
+#if CONFIG_IDF_TARGET_ESP32
 #include <esp32/rom/ets_sys.h>
+#elif CONFIG_IDF_TARGET_ESP32S2
+#include <esp32s2/rom/ets_sys.h>
+#elif CONFIG_IDF_TARGET_ESP32S3
+#include <esp32s3/rom/ets_sys.h>
+#elif CONFIG_IDF_TARGET_ESP32C3
+#include <esp32c3/rom/ets_sys.h>
+#else
+#error "Unsupported ESP chip"
+#endif
+
 
 #define TM1637_ADDR_AUTO  0x40
 #define TM1637_ADDR_FIXED 0x44
@@ -101,7 +113,7 @@ void tm1637_send_byte(tm1637_led_t * led, uint8_t byte)
 
 void tm1637_delay()
 {
-    ets_delay_us(3);
+    ets_delay_us(CONFIG_DELAY_BLOCKING_TIME);
 }
 
 // PUBLIC PART:

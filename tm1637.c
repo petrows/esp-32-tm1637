@@ -122,7 +122,7 @@ tm1637_led_t * tm1637_init(gpio_num_t pin_clk, gpio_num_t pin_data) {
     tm1637_led_t * led = (tm1637_led_t *) malloc(sizeof(tm1637_led_t));
     led->m_pin_clk = pin_clk;
     led->m_pin_dta = pin_data;
-    led->m_brightness = 0x07;
+    led->m_brightness = CONFIG_TM1637_BRIGHTNESS;
     // Set CLK to low during DIO initialization to avoid sending a start signal by mistake
     gpio_set_direction(pin_clk, GPIO_MODE_OUTPUT);
     gpio_set_level(pin_clk, 0);

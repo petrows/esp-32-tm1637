@@ -1,0 +1,10 @@
+version: "1.0.0"
+description: ESP IDF component for controlling TM1637 LCD 7-Segment display
+url: https://github.com/petrows/esp-32-tm1637
+issues: https://github.com/petrows/esp-32-tm1637/issues
+repository: https://github.com/petrows/esp-32-tm1637.git
+maintainers: Peter Petrovich <petro@petro.ws>
+dependencies:
+  ## Required IDF version
+  idf:
+    version: ">=4.0"

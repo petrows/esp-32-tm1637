@@ -15,4 +15,13 @@ menu "ESP TM1637"
             TM1637 module hardware. The range for this option is from 1 to 100 microseconds,
             with a default value of 50 microseconds.
 
+    config TM1637_BRIGHTNESS
+        int "TM1637 LED brightness"
+        range 0 7
+        default 7
+        help
+            This option sets the init brightness level of the TM1637 LED module.
+            The value should be between 0 (lowest brightness) and 7 (highest brightness).
+            The default brightness value is 7 (highest brightness).
+
 endmenu

@@ -65,7 +65,7 @@ void lcd_tm1637_task(void * arg)
 			// Display time with blinking dots
 			for (int z=0; z<5; ++z) {
 				tm1637_set_number_lead_dot(lcd, time_number, true, z%2 ? 0xFF : 0x00);
-				vTaskDelay(500 / portTICK_RATE_MS);
+				vTaskDelay(500 / portTICK_PERIOD_MS);
 			}
 		}
 
@@ -76,7 +76,7 @@ void lcd_tm1637_task(void * arg)
 			tm1637_set_segment_number(lcd, 1, x, show_dot); // On my display "dot" (clock symbol ":") connected only here
 			tm1637_set_segment_number(lcd, 2, x, show_dot);
 			tm1637_set_segment_number(lcd, 3, x, show_dot);
-			vTaskDelay(100 / portTICK_RATE_MS);
+			vTaskDelay(100 / portTICK_PERIOD_MS);
 		}
 	}
 }

@@ -101,6 +101,8 @@ void tm1637_send_byte(tm1637_led_t * led, uint8_t byte)
     // CLK after sending the 8th bit, to the next falling edge of CLK.
     // DIO needs to be set as input during this time to avoid having both
     // chips trying to drive DIO at the same time.
+    gpio_reset_pin(pin_clk);
+    gpio_reset_pin(pin_data);
     gpio_set_direction(led->m_pin_dta, GPIO_MODE_INPUT);
     gpio_set_level(led->m_pin_clk, 0); // TM1637 starts ACK (pulls DIO low)
     tm1637_delay();
